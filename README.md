@@ -1,7 +1,7 @@
 # hikvision video SDK / Cordova Plugin
 
 ![AppVeyor branch](https://img.shields.io/appveyor/ci/Eugene2799/eugene-cordova-hikvision-sdk/master)
-![npm](https://img.shields.io/npm/v/eugene-cordova-hikvision-sdk)
+![npm](https://img.shields.io/npm/v/cordova-hikvision-sdk-eugene)
 [![platforms](https://img.shields.io/badge/platforms-Android-lightgrey)](https://github.com/Eugene2799/eugene-cordova-hikvision-sdk)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Eugene2799/eugene-cordova-hikvision-sdk)
 
@@ -21,10 +21,10 @@
 - 通过 Cordova Plugins 安装，要求 Cordova CLI 5.0+：
 
   ```shell
-  cordova plugin add eugene-cordova-hikvision-sdk
+  cordova plugin add cordova-hikvision-sdk-eugene
   ```
   
-- 修改plugins/eugene-cordova-hikvision-sdk/src/android/libs/PreviewActivity.java中19行
+- 修改plugins/cordova-hikvision-sdk-eugene/src/android/libs/PreviewActivity.java中19行
   ```java
   import your.app.package.name.R;
   ```

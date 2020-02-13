@@ -1,5 +1,5 @@
 {
-  "name": "eugene-cordova-hikvision-sdk",
+  "name": "cordova-hikvision-sdk-eugene",
   "version": "1.0.0",
   "description": "a hikvision sdk plugin",
   "scripts": {
