@@ -9,9 +9,9 @@
 
 ## hikvision SDK下载及接口文档
 
-[视频SDK-Android版本 V1.2.0](https://open.hikvision.com/download/5c67f1e2f05948198c909700?type=10)
+[视频SDK-Android版本HikVideoPlayerDemo_Android_V1.3.0_build202001091556_20200110165814](https://open.hikvision.com/download/5c67f1e2f05948198c909700?type=10)
 
->注意：插件使用需修改src/android/libs/PreviewActivity.java中19行，导入自己项目包的R类。
+>注意：插件使用需修改src/android/libs/PreviewActivity.java和src/android/widget/AutoHideView.java中第3行，导入自己项目包的R类。
 >```java
 >import your.app.package.name.R;
 >```
@@ -35,11 +35,13 @@
   ```
   
 ## Usage
-### init plugin
+### init plugin 插件初始化
    ```html
    window.plugins.hikVisionSDK.init();
    ```
 ### start activity && set params
+### 调用方法showHikVideoPage切换页面并显示监控视频
+### 参数1 url为监控视频url，title为监控视频名称（title暂无UI展示区域）
 
 ```html
 let param = { 'url': yourMonitorUrl, 'title': setTitle }
