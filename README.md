@@ -33,6 +33,19 @@
   ```java
   import your.app.package.name.R;
   ```
+
+## 修改完后可能需要执行的操作
+- 修改完可能需要移除并重新添加cordova的android平台
+  ```shell
+  cordova platform remove android
+  cordova platform add android
+  ```
+
+- 验证是否成功
+  ```shell
+  cordova build android
+  ```
+  提示编译成功。
   
 ## Usage
 ### init plugin 插件初始化
