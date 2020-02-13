@@ -57,4 +57,4 @@ window.plugins.hikVisionSDK.showHikVideoPage(param,function (msg) {
 
 ## 最终效果图
 
-![效果图](http://qiniublog.whitedolphin.top/20200213211151.jpg)
+![效果图](http://qiniublog.whitedolphin.top/20200213213259.png)
