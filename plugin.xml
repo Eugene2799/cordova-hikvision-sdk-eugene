@@ -93,6 +93,8 @@
     <source-file src="src/android/PreviewActivity.java" target-dir="src/cn/cordova/hikvision/sdk"/>
     <source-file src="src/android/PlayerStatus.java" target-dir="src/cn/cordova/hikvision/sdk"/>
     <source-file src="src/android/MyUtils.java" target-dir="src/cn/cordova/hikvision/sdk"/>
+    <source-file src="src/android/widget/AutoHideView.java" target-dir="src/cn/cordova/hikvision/sdk/widget"/>
+    <source-file src="src/android/widget/PlayWindowContainer.java" target-dir="src/cn/cordova/hikvision/sdk/widget"/>
     <source-file src="src/android/res/layout/activity_preview.xml" target-dir="res/layout" />
 
     <source-file src="src/android/res/drawable/ic_launcher_background.xml" target-dir="res/drawable" />

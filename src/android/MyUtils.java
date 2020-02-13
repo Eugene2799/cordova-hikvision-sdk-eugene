@@ -1,6 +1,5 @@
 package cn.cordova.hikvision.sdk;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;

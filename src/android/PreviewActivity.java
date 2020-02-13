@@ -1,36 +1,41 @@
 package cn.cordova.hikvision.sdk;
 
-import android.content.Context;
-import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.content.Intent;
-import android.view.Gravity;
 import android.view.TextureView;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import your.app.package.name.R;
+
+import com.blankj.utilcode.util.ScreenUtils;
+import com.blankj.utilcode.util.SizeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.hikvision.open.app.widget.AutoHideView;
+import com.hikvision.open.app.widget.PlayWindowContainer;
+import com.hikvision.open.hikvideoplayer.CustomRect;
 import com.hikvision.open.hikvideoplayer.HikVideoPlayer;
 import com.hikvision.open.hikvideoplayer.HikVideoPlayerCallback;
 import com.hikvision.open.hikvideoplayer.HikVideoPlayerFactory;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 /**
@@ -38,61 +43,67 @@ import java.text.MessageFormat;
  */
 public class PreviewActivity extends AppCompatActivity implements View.OnClickListener, HikVideoPlayerCallback, TextureView.SurfaceTextureListener {
     private static final String TAG = "PreviewActivity";
+    //    private static final String previewUri = "rtsp://10.40.239.31:554/openUrl/xjmVph6";
+    // private static final String previewUri = "rtsp://10.66.165.243:655/EUrl/8ccdhg4";
     private static final String previewUri = "";
 
+    /**
+     * 播放区域
+     */
+    protected PlayWindowContainer frameLayout;
     protected TextureView textureView;
-    protected TextView toolBarTitle;
     protected ProgressBar progressBar;
+    protected TextView playHintText;
+    protected TextView digitalScaleText;
+    protected AutoHideView autoHideView;
+    /**
+     * 控制按钮
+     */
     protected Button captureButton;
     protected Button recordButton;
     protected Button soundButton;
-    protected TextView playHintText;
+    protected TextInputLayout textInputLayout;
     protected EditText reviewUriEdit;
     protected Button start;
     protected Button stop;
-    protected ImageButton bt_big;
-    protected ImageButton bt_small;
+    protected SwitchCompat decodeSwitch;
+    protected SwitchCompat smartSwitch;
+    private TextView mRecordFilePathText;
+
     private String mUri;
     private String mTitle;
-    private int width;
-    private int height;
     private HikVideoPlayer mPlayer;
     private boolean mSoundOpen = false;
     private boolean mRecording = false;
+    private boolean mDigitalZooming = false;
     private PlayerStatus mPlayerStatus = PlayerStatus.IDLE;//默认闲置
-    private TextView mRecordFilePathText;
-    private Toolbar mToolbar;
-
+    /**
+     * 电子放大倍数格式化,显示小数点后一位
+     */
+    private DecimalFormat decimalFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);//防止键盘弹出
         super.setContentView(R.layout.activity_preview);
-        mPlayer = HikVideoPlayerFactory.provideHikVideoPlayer();
         initView();
+        initPlayWindowContainer();
+        mPlayer = HikVideoPlayerFactory.provideHikVideoPlayer();
+        //设置默认值
+        mPlayer.setHardDecodePlay(decodeSwitch.isChecked());
+        mPlayer.setSmartDetect(smartSwitch.isChecked());
     }
 
     private void initView() {
         Intent intent = getIntent();
         mUri = intent.getStringExtra("hikUrl");
         mTitle = intent.getStringExtra("hikTitle");
-        toolBarTitle = findViewById(R.id.toolbar_title);
-        mToolbar = findViewById(R.id.app_toolbar);
-        setSupportActionBar(mToolbar);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
-        mToolbar.setNavigationIcon(R.drawable.ic_back);
-        mToolbar.setNavigationOnClickListener(v -> finish());
-        toolBarTitle.setText(mTitle);
         textureView = findViewById(R.id.texture_view);
         progressBar = findViewById(R.id.progress_bar);
         playHintText = findViewById(R.id.result_hint_text);
-        bt_big = findViewById(R.id.bt_big);
-        bt_small = findViewById(R.id.bt_small);
+        digitalScaleText = findViewById(R.id.digital_scale_text);
+        autoHideView = findViewById(R.id.auto_hide_view);
         captureButton = findViewById(R.id.capture_button);
         mRecordFilePathText = findViewById(R.id.record_file_path_text);
         captureButton.setOnClickListener(PreviewActivity.this);
@@ -100,36 +111,64 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         recordButton.setOnClickListener(PreviewActivity.this);
         soundButton = findViewById(R.id.sound_button);
         soundButton.setOnClickListener(PreviewActivity.this);
+        textInputLayout = findViewById(R.id.text_input_layout);
         reviewUriEdit = findViewById(R.id.review_uri_edit);
         start = findViewById(R.id.start);
         stop = findViewById(R.id.stop);
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
-        bt_big.setOnClickListener(this);
-        bt_small.setOnClickListener(this);
+        decodeSwitch = findViewById(R.id.decode_switch);
+        smartSwitch = findViewById(R.id.smart_switch);
+        //默认为软件解码，硬件解码时，智能信息会不显示
+        decodeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mPlayerStatus == PlayerStatus.LOADING || mPlayerStatus == PlayerStatus.SUCCESS){
+                    //播放加载过程中和正在播放时，不可以点击
+                    ToastUtils.showShort("此设置必须要在播放前设置");
+                    decodeSwitch.setChecked(!isChecked);
+                    return;
+                }
+                ToastUtils.showShort(isChecked ? "硬解码开" : "硬解码关");
+                mPlayer.setHardDecodePlay(isChecked);
+            }
+        });
+        //默认关闭智能信息展示，智能信息包括智能分析、移动侦测、热成像信息、温度信息等
+        smartSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mPlayerStatus == PlayerStatus.LOADING || mPlayerStatus == PlayerStatus.SUCCESS){
+                    //播放加载过程中和正在播放时，不可以点击
+                    ToastUtils.showShort("此设置必须要在播放前设置");
+                    smartSwitch.setChecked(!isChecked);
+                    return;
+                }
+                ToastUtils.showShort(isChecked ? "智能信息开" : "智能信息关");
+                mPlayer.setSmartDetect(isChecked);
+            }
+        });
         reviewUriEdit.setText(previewUri);
         textureView.setSurfaceTextureListener(this);
+    }
 
-        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
-        width = dm.widthPixels;         // 屏幕宽度（像素）
-        height = dm.heightPixels;       // 屏幕高度（像素）
-        float density = dm.density;         // 屏幕密度（0.75 / 1.0 / 1.5）
-        int densityDpi = dm.densityDpi;     // 屏幕密度dpi（120 / 160 / 240）
-        // 屏幕宽度算法:屏幕宽度（像素）/屏幕密度
-        int screenWidth = (int) (width / density);  // 屏幕宽度(dp)
-        int screenHeight = (int) (height / density);// 屏幕高度(dp)
-
-        Log.d("h_bl", "屏幕宽度（像素）：" + width);
-        Log.d("h_bl", "屏幕高度（像素）：" + height);
-        Log.d("h_bl", "屏幕密度（0.75 / 1.0 / 1.5）：" + density);
-        Log.d("h_bl", "屏幕密度dpi（120 / 160 / 240）：" + densityDpi);
-        Log.d("h_bl", "屏幕宽度（dp）：" + screenWidth);
-        Log.d("h_bl", "屏幕高度（dp）：" + screenHeight);
-
-        textureView.setLayoutParams(new FrameLayout.LayoutParams(width, 800, Gravity.CENTER));
-
+    private void initPlayWindowContainer() {
+        frameLayout = findViewById(R.id.frame_layout);
+        frameLayout.setOnClickListener(new PlayWindowContainer.OnClickListener() {
+            @Override
+            public void onSingleClick() {
+                if (autoHideView.isVisible()) {
+                    autoHideView.hide();
+                } else {
+                    autoHideView.show();
+                }
+            }
+        });
+        frameLayout.setOnDigitalListener(new PlayWindowContainer.OnDigitalZoomListener() {
+            @Override
+            public void onDigitalZoomOpen() {
+                executeDigitalZoom();
+            }
+        });
     }
 
     @Override
@@ -145,6 +184,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 progressBar.setVisibility(View.GONE);
                 playHintText.setVisibility(View.VISIBLE);
                 playHintText.setText("");
+                resetExecuteState();
                 mPlayer.stopPlay();
             }
         } else if (view.getId() == R.id.capture_button) {
@@ -153,21 +193,108 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             executeRecordEvent();
         } else if (view.getId() == R.id.sound_button) {
             executeSoundEvent();
-        } else if (view.getId() == R.id.bt_big) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//隐藏状态栏
-            textureView.setLayoutParams(new FrameLayout.LayoutParams(height, width, Gravity.CENTER));
-            bt_big.setVisibility(View.GONE);
-            bt_small.setVisibility(View.VISIBLE);
-            mToolbar.setVisibility(View.GONE);
-        } else if (view.getId() == R.id.bt_small) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//隐藏状态栏
-            textureView.setLayoutParams(new FrameLayout.LayoutParams(width, 800, Gravity.CENTER));
-            bt_big.setVisibility(View.VISIBLE);
-            bt_small.setVisibility(View.GONE);
-            mToolbar.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        layoutViews();
+    }
+
+    /**
+     * 屏幕方向变化后重新布局View
+     */
+    private void layoutViews() {
+        ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
+        if (ScreenUtils.isPortrait()) {
+            //先显示系统状态栏
+            showSystemUI();
+            //再显示控制按钮区域
+            layoutParams.height = SizeUtils.dp2px(250f);
+            showOrHideControlArea(true);
+        } else if (ScreenUtils.isLandscape()) {
+            //隐藏系统UI
+            hideSystemUI();
+            showOrHideControlArea(false);
+            layoutParams.height = ScreenUtils.getScreenHeight();
+        }
+    }
+
+    /**
+     * 显示或隐藏控制区域
+     *
+     * @param isShow true-显示，false-隐藏
+     */
+    private void showOrHideControlArea(boolean isShow) {
+        int visibility = isShow ? View.VISIBLE : View.GONE;
+        captureButton.setVisibility(visibility);
+        recordButton.setVisibility(visibility);
+        soundButton.setVisibility(visibility);
+        textInputLayout.setVisibility(visibility);
+        start.setVisibility(visibility);
+        stop.setVisibility(visibility);
+        decodeSwitch.setVisibility(visibility);
+        smartSwitch.setVisibility(visibility);
+        mRecordFilePathText.setVisibility(visibility);
+    }
+
+    /**
+     * 隐藏系统ui
+     */
+    private void hideSystemUI() {
+        //隐藏ActionBar 如果使用了NoActionBar的Theme则不需要隐藏actionBar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
+        //TODO：View.setSystemUiVisibility(int visibility)中，visibility是Mode与Layout任意取值的组合，可传入的实参为：
+
+        // Mode属性
+        //View.SYSTEM_UI_FLAG_LOW_PROFILE：状态栏显示处于低能显示状态(low profile模式)，状态栏上一些图标显示会被隐藏。
+        //View.SYSTEM_UI_FLAG_FULLSCREEN：Activity全屏显示，且状态栏被隐藏覆盖掉。等同于（WindowManager.LayoutParams.FLAG_FULLSCREEN）
+        //View.SYSTEM_UI_FLAG_HIDE_NAVIGATION：隐藏虚拟按键(导航栏)。有些手机会用虚拟按键来代替物理按键。
+        //View.SYSTEM_UI_FLAG_IMMERSIVE：这个flag只有当设置了SYSTEM_UI_FLAG_HIDE_NAVIGATION才起作用。
+        // 如果没有设置这个flag，任意的View相互动作都退出SYSTEM_UI_FLAG_HIDE_NAVIGATION模式。如果设置就不会退出。
+        //View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY：这个flag只有当设置了SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_HIDE_NAVIGATION 时才起作用。
+        // 如果没有设置这个flag，任意的View相互动作都坏退出SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_HIDE_NAVIGATION模式。如果设置就不受影响。
+
+        // Layout属性
+        //View.SYSTEM_UI_FLAG_LAYOUT_STABLE： 保持View Layout不变，隐藏状态栏或者导航栏后，View不会拉伸。
+        //View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN：让View全屏显示，Layout会被拉伸到StatusBar下面，不包含NavigationBar。
+        //View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION：让View全屏显示，Layout会被拉伸到StatusBar和NavigationBar下面。
+        View decorView = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LOW_PROFILE
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+        }
+        //解决在华为手机上横屏时，状态栏不消失的问题
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
+
+    }
+
+    /**
+     * 显示系统UI
+     */
+    private void showSystemUI() {
+        //显示ActionBar 如果使用了NoActionBar的Theme则不需要显示actionBar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+        View decorView = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // This snippet shows the system bars. It does this by removing all the flags
+            // except for the ones that make the content appear under the system bars.
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+        //解决在华为手机上横屏时，状态栏不消失的问题
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //显示状态栏
     }
 
 
@@ -225,16 +352,74 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             if (mPlayer.enableSound(true)) {
                 ToastUtils.showShort("声音开");
                 mSoundOpen = true;
-//                 soundButton.setText(R.string.sound_close);
+                soundButton.setText(R.string.sound_close);
             }
         } else {
             //关闭声音
             if (mPlayer.enableSound(false)) {
                 ToastUtils.showShort("声音关");
                 mSoundOpen = false;
-//                 soundButton.setText(R.string.sound_open);
+                soundButton.setText(R.string.sound_open);
             }
         }
+    }
+
+    /**
+     * 执行电子放大操作
+     */
+    private void executeDigitalZoom(){
+        if (mPlayerStatus != PlayerStatus.SUCCESS) {
+            ToastUtils.showShort("没有视频在播放");
+        }
+        if (decimalFormat == null){
+            decimalFormat = new DecimalFormat("0.0");
+        }
+        if (!mDigitalZooming){
+            frameLayout.setOnScaleChangeListener(new PlayWindowContainer.OnDigitalScaleChangeListener() {
+                @Override
+                public void onDigitalScaleChange(float scale) {
+                    Log.i(TAG,"onDigitalScaleChange scale = "+scale);
+                    if (scale < 1.0f && mDigitalZooming){
+                        //如果已经开启了电子放大且倍率小于1就关闭电子放大
+                        executeDigitalZoom();
+                    }
+                    if (scale>= 1.0f){
+                        digitalScaleText.setText(MessageFormat.format("{0}X",decimalFormat.format(scale)));
+                    }
+                }
+
+                @Override
+                public void onDigitalRectChange(CustomRect oRect, CustomRect curRect) {
+                    mPlayer.openDigitalZoom(oRect, curRect);
+                }
+            });
+            ToastUtils.showShort("电子放大开启");
+            mDigitalZooming = true;
+            digitalScaleText.setVisibility(View.VISIBLE);
+            digitalScaleText.setText(MessageFormat.format("{0}X",decimalFormat.format(1.0f)));
+        }else {
+            ToastUtils.showShort("电子放大关闭");
+            mDigitalZooming = false;
+            digitalScaleText.setVisibility(View.GONE);
+            frameLayout.setOnScaleChangeListener(null);
+            mPlayer.closeDigitalZoom();
+        }
+    }
+
+    /**
+     * 重置所有的操作状态
+     */
+    private void resetExecuteState(){
+        if (mDigitalZooming){
+            executeDigitalZoom();
+        }
+        if (mSoundOpen){
+            executeSoundEvent();
+        }
+        if (mRecording){
+            executeRecordEvent();
+        }
+        frameLayout.setAllowOpenDigitalZoom(false);
     }
 
 
@@ -293,6 +478,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 progressBar.setVisibility(View.GONE);
+                //只有播放成功时，才允许开启电子放大
+                frameLayout.setAllowOpenDigitalZoom(status == Status.SUCCESS);
                 switch (status) {
                     case SUCCESS:
                         //播放成功
@@ -341,9 +528,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             //恢复处于暂停播放状态的窗口
             startRealPlay(textureView.getSurfaceTexture());
             Log.d(TAG, "onSurfaceTextureAvailable: startRealPlay");
-        }
-        if (mPlayerStatus != PlayerStatus.SUCCESS && getPreviewUri()) {
-            startRealPlay(textureView.getSurfaceTexture());
         }
     }
 
