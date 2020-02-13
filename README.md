@@ -51,6 +51,10 @@ window.plugins.hikVisionSDK.showHikVideoPage(param,function (msg) {
   console.log(err)
 });
 ```
+
+##最终效果图
+
+![效果图](http://qiniublog.whitedolphin.top/20200213211151.jpg)
     
 ## FAQ
 > 如果遇到了疑问，请优先参考 代码 和 海康威视API 文档。若还无法解决，可到 [Issues](https://github.com/Eugene2799/eugene-cordova-hikvision-sdk/issues) 提问。
