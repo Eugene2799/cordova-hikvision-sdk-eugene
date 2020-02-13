@@ -24,7 +24,12 @@
   cordova plugin add cordova-hikvision-sdk-eugene
   ```
   
-- 修改plugins/cordova-hikvision-sdk-eugene/src/android/libs/PreviewActivity.java中19行
+- 修改plugins/cordova-hikvision-sdk-eugene/src/android/PreviewActivity.java中第3行
+  ```java
+  import your.app.package.name.R;
+  ```
+
+- 修改plugins/cordova-hikvision-sdk-eugene/src/android/widget/AutoHideView.java中第3行
   ```java
   import your.app.package.name.R;
   ```

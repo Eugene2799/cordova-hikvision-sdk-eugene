@@ -7,9 +7,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.hikvision.open.app.PreviewActivity">
+        tools:context="cn.cordova.hikvision.sdk.PreviewActivity">
 
-        <com.hikvision.open.app.widget.PlayWindowContainer
+        <cn.cordova.hikvision.sdk.widget.PlayWindowContainer
             android:id="@+id/frame_layout"
             android:layout_width="match_parent"
             android:layout_height="250dp"
@@ -51,13 +51,13 @@
                 android:textSize="16sp"
                 android:layout_marginRight="@dimen/fab_margin" />
 
-            <com.hikvision.open.app.widget.AutoHideView
+            <cn.cordova.hikvision.sdk.widget.AutoHideView
                 android:id="@+id/auto_hide_view"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_gravity="bottom"
                 android:visibility="gone"/>
-        </com.hikvision.open.app.widget.PlayWindowContainer>
+        </cn.cordova.hikvision.sdk.widget.PlayWindowContainer>
 
 
         <android.support.design.widget.TextInputLayout
@@ -143,9 +143,8 @@
             android:layout_below="@id/decode_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="/storage/emulated/0/Android/data/com.hikvision.open.app/files/Pictures/_20180917151634445.jpg" />
+            tools:text="/storage/emulated/0/Android/data/cn.cordova.hikvision.sdk/files/Pictures/_20180917151634445.jpg" />
 
     </RelativeLayout>
 
 </ScrollView>
-

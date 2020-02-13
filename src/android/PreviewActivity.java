@@ -1,5 +1,7 @@
 package cn.cordova.hikvision.sdk;
 
+import your.app.package.name.R;
+
 import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
@@ -22,8 +24,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import your.app.package.name.R;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
@@ -147,7 +147,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 mPlayer.setSmartDetect(isChecked);
             }
         });
-        reviewUriEdit.setText(previewUri);
+        reviewUriEdit.setText(mUri);
         textureView.setSurfaceTextureListener(this);
     }
 

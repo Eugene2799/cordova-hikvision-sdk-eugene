@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-hikvision-sdk-eugene" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0"
+<plugin id="cordova-hikvision-sdk-eugene" version="1.0.2" xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
   <name>hikvision SDK</name>
   <description>A hikvision SDK Plugin for Cordova.</description>
@@ -96,6 +96,7 @@
     <source-file src="src/android/widget/AutoHideView.java" target-dir="src/cn/cordova/hikvision/sdk/widget"/>
     <source-file src="src/android/widget/PlayWindowContainer.java" target-dir="src/cn/cordova/hikvision/sdk/widget"/>
     <source-file src="src/android/res/layout/activity_preview.xml" target-dir="res/layout" />
+    <source-file src="src/android/res/layout/view_auto_hide.xml" target-dir="res/layout" />
 
     <source-file src="src/android/res/drawable/ic_launcher_background.xml" target-dir="res/drawable" />
     <source-file src="src/android/res/drawable-v24/ic_launcher_foreground.xml" target-dir="res/drawable-v24" />

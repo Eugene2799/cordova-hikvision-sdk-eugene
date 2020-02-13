@@ -1,5 +1,7 @@
 package cn.cordova.hikvision.sdk.widget;
 
+import your.app.package.name.R;
+
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -14,7 +16,6 @@ import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import cn.cordova.hikvision.sdk.MyUtils;
-import cn.cordova.hikvision.sdk.R;
 
 /**
  * 自动隐藏的工具栏View
