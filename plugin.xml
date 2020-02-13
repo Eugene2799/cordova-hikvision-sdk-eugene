@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="eugene-cordova-hikvision-sdk" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+  <name>hikvision SDK</name>
+  <description>A hikvision SDK Plugin for Cordova.</description>
+  <license>MIT</license>
+  <engines>
+    <engine name="cordova" version=">=3.0.0"/>
+  </engines>
+  <js-module name="hikvisionSDK" src="www/hikvisionSDK.js">
+    <merges target="cordova.plugins.hikvisionSDK"/>
+  </js-module>
+
+  <!-- dependencies -->
+  <dependency id="cordova-plugin-device" />
+
+  <platform name="android">
+    <preference name="APPCOMPAT_VERSION" default="28.+" />
+    <framework src="com.android.support:appcompat-v7:$APPCOMPAT_VERSION"/>
+    <config-file parent="/*" target="res/xml/config.xml">
+      <feature name="HikVisionSDK">
+        <param name="android-package" value="cn.cordova.hikvision.sdk.HikVisionSDK"/>
+      </feature>
+    </config-file>
+    
+    <lib-file src="src/android/libs/HikVideoPlayer.jar"/>
+
+    <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <!-- 此处添加activity -->
+      <activity
+        android:configChanges="keyboardHidden|orientation|screenSize" 
+        android:screenOrientation="nosensor"
+        android:windowSoftInputMode="adjustResize" 
+        android:exported="false" 
+        android:launchMode="singleInstance" 
+        android:name="cn.cordova.hikvision.sdk.PreviewActivity" 
+        android:theme="@style/AppTheme.NoActionBar">
+      </activity>
+    </config-file>
+
+    <resource-file src="src/android/jniLibs/arm64-v8a/libAudioEngine.so" target="jniLibs/arm64-v8a/libAudioEngine.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libcrypto.so" target="jniLibs/arm64-v8a/libcrypto.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libFormatConversion.so" target="jniLibs/arm64-v8a/libFormatConversion.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libFormatConversionSDK.so" target="jniLibs/arm64-v8a/libFormatConversionSDK.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libhpr.so" target="jniLibs/arm64-v8a/libhpr.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libHPSClient.so" target="jniLibs/arm64-v8a/libHPSClient.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libHPSClientSDK.so" target="jniLibs/arm64-v8a/libHPSClientSDK.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaACodec.so" target="jniLibs/arm64-v8a/libMediaACodec.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaAssistant.so" target="jniLibs/arm64-v8a/libMediaAssistant.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaExtractor.so" target="jniLibs/arm64-v8a/libMediaExtractor.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaMuxer.so" target="jniLibs/arm64-v8a/libMediaMuxer.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaPostProc.so" target="jniLibs/arm64-v8a/libMediaPostProc.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaVDecode.so" target="jniLibs/arm64-v8a/libMediaVDecode.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libMediaVEncode.so" target="jniLibs/arm64-v8a/libMediaVEncode.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libPlayCtrl.so" target="jniLibs/arm64-v8a/libPlayCtrl.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libssl.so" target="jniLibs/arm64-v8a/libssl.so"/>
+    <resource-file src="src/android/jniLibs/arm64-v8a/libSystemTransform.so" target="jniLibs/arm64-v8a/libSystemTransform.so"/>
+
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libAudioEngine.so" target="jniLibs/armeabi-v7a/libAudioEngine.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libcrypto.so" target="jniLibs/armeabi-v7a/libcrypto.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libFormatConversion.so" target="jniLibs/armeabi-v7a/libFormatConversion.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libFormatConversionSDK.so" target="jniLibs/armeabi-v7a/libFormatConversionSDK.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libhpr.so" target="jniLibs/armeabi-v7a/libhpr.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libHPSClient.so" target="jniLibs/armeabi-v7a/libHPSClient.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libHPSClientSDK.so" target="jniLibs/armeabi-v7a/libHPSClientSDK.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaACodec.so" target="jniLibs/armeabi-v7a/libMediaACodec.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaAssistant.so" target="jniLibs/armeabi-v7a/libMediaAssistant.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaExtractor.so" target="jniLibs/armeabi-v7a/libMediaExtractor.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaMuxer.so" target="jniLibs/armeabi-v7a/libMediaMuxer.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaPostProc.so" target="jniLibs/armeabi-v7a/libMediaPostProc.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaVDecode.so" target="jniLibs/armeabi-v7a/libMediaVDecode.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libMediaVEncode.so" target="jniLibs/armeabi-v7a/libMediaVEncode.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libPlayCtrl.so" target="jniLibs/armeabi-v7a/libPlayCtrl.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libssl.so" target="jniLibs/armeabi-v7a/libssl.so"/>
+    <resource-file src="src/android/jniLibs/armeabi-v7a/libSystemTransform.so" target="jniLibs/armeabi-v7a/libSystemTransform.so"/>
+
+    <resource-file src="src/android/res/drawable-xhdpi/ic_maximum_white_nor_24.png" target="res/drawable-xhdpi/ic_maximum_white_nor_24.png" />
+    <resource-file src="src/android/res/drawable-xhdpi/ic_minimum_white_nor_24.png" target="res/drawable-xhdpi/ic_minimum_white_nor_24.png" />
+    <resource-file src="src/android/res/drawable-xxhdpi/icon_time_bar_center_line.png" target="res/drawable-xxhdpi/icon_time_bar_center_line.png" />
+
+    <config-file parent="/*" target="AndroidManifest.xml">
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+      <uses-permission android:name="android.permission.RECORD_AUDIO" />
+      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    </config-file>
+
+    <source-file src="src/android/HikVisionSDK.java" target-dir="src/cn/cordova/hikvision/sdk"/>
+    <source-file src="src/android/PreviewActivity.java" target-dir="src/cn/cordova/hikvision/sdk"/>
+    <source-file src="src/android/PlayerStatus.java" target-dir="src/cn/cordova/hikvision/sdk"/>
+    <source-file src="src/android/MyUtils.java" target-dir="src/cn/cordova/hikvision/sdk"/>
+    <source-file src="src/android/res/layout/activity_preview.xml" target-dir="res/layout" />
+
+    <source-file src="src/android/res/drawable/ic_launcher_background.xml" target-dir="res/drawable" />
+    <source-file src="src/android/res/drawable-v24/ic_launcher_foreground.xml" target-dir="res/drawable-v24" />
+    
+    <resource-file src="src/android/res/values/colors.xml" target="res/values/colors.xml" />
+    <resource-file src="src/android/res/values/dimens.xml" target="res/values/dimens.xml" />
+    <resource-file src="src/android/res/values/hikvision_strings.xml" target="res/values/hikvision_strings.xml" />
+    <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
+
+  </platform>
+</plugin>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.hikvision.open.app.PlaybackActivity">
+
+        <com.hikvision.open.app.widget.PlayWindowContainer
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/black">
+
+            <TextureView
+                android:id="@+id/texture_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/result_hint_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/digital_scale_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="1.0X"
+                android:textSize="16sp"
+                android:layout_marginRight="@dimen/fab_margin" />
+
+            <com.hikvision.open.app.widget.AutoHideView
+                android:id="@+id/auto_hide_view"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:visibility="gone"/>
+        </com.hikvision.open.app.widget.PlayWindowContainer>
+
+        <com.hikvision.open.app.TimeBarView
+            android:id="@+id/time_bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/frame_layout"
+            android:background="#333333"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/playback_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/time_bar"
+            android:layout_marginTop="10dp">
+
+            <EditText
+                android:id="@+id/playback_uri_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/please_input_playback_uri"
+                android:inputType="textUri" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playback_input_layout"
+            android:text="@string/start_playback" />
+
+        <Button
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playback_input_layout"
+            android:layout_toRightOf="@id/start"
+            android:text="@string/stop_playback" />
+
+
+        <Button
+            android:id="@+id/capture_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start"
+            android:text="@string/capture" />
+
+        <Button
+            android:id="@+id/record_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start"
+            android:layout_toRightOf="@id/capture_button"
+            android:text="@string/start_record" />
+
+        <Button
+            android:id="@+id/sound_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start"
+            android:layout_toRightOf="@id/record_button"
+            android:text="@string/sound_open" />
+
+        <Button
+            android:id="@+id/pause_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start"
+            android:layout_toRightOf="@id/sound_button"
+            android:text="@string/pause" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/decode_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/capture_button"
+            android:text="@string/decode_device"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:checked="false"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/smart_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/capture_button"
+            android:layout_toRightOf="@id/decode_switch"
+            android:text="@string/smart_detect"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:layout_toEndOf="@id/decode_switch"
+            android:checked="true"/>
+
+        <TextView
+            android:id="@+id/record_file_path_text"
+            android:layout_below="@id/decode_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="/storage/emulated/0/Android/data/com.hikvision.open.app/files/Pictures/_20180917151634445.jpg" />
+    </RelativeLayout>
+
+</ScrollView>
+

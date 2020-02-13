@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="#CCff0000"
+    tools:parentTag="FrameLayout">
+
+    <!-- 横竖屏切换按钮   -->
+    <ImageView
+        android:id="@+id/switch_screen_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_gravity="end|center_vertical"
+        android:src="@drawable/ic_maximum_white_nor_24"/>
+</merge>

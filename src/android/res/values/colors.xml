@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#c92e3d</color>
+    <color name="colorPrimaryDark">#c92e3d</color>
+    <color name="colorAccent">#930b19</color>
+
+
+    <!-- 回放，TimeBar底部可播放时间区域显示颜色 -->
+    <color name="playback_timebar_color">#2e78c2</color>
+
+</resources>

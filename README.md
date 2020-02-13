@@ -21,10 +21,10 @@
 - 通过 Cordova Plugins 安装，要求 Cordova CLI 5.0+：
 
   ```shell
-  cordova plugin add eugene-cordova-hik-vision-sdk
+  cordova plugin add eugene-cordova-hikvision-sdk
   ```
   
-- 修改plugins/eugene-cordova-hik-vision-sdk/src/android/libs/PreviewActivity.java中19行
+- 修改plugins/eugene-cordova-hikvision-sdk/src/android/libs/PreviewActivity.java中19行
   ```java
   import your.app.package.name.R;
   ```
@@ -46,5 +46,5 @@ window.plugins.hikVisionSDK.showHikVideoPage(param,function (msg) {
 ```
     
 ## FAQ
-> 如果遇到了疑问，请优先参考 代码 和 海康威视API 文档。若还无法解决，可到 [Issues](https://github.com/Eugene2799/eugene-cordova-hik-vision-sdk/issues) 提问。
+> 如果遇到了疑问，请优先参考 代码 和 海康威视API 文档。若还无法解决，可到 [Issues](https://github.com/Eugene2799/eugene-cordova-hikvision-sdk/issues) 提问。
 
